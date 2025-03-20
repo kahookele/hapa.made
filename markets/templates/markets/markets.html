@@ -1,0 +1,72 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'core/navbar.html' %}
+
+<style>
+  /* Minimal custom CSS to remove card shadow and keep a clean layout */
+  .card-no-shadow {
+    border: 1px solid #ddd;
+    box-shadow: none !important;
+    border-radius: 0.25rem;
+  }
+
+  /* Custom link style for market links */
+  .custom-link {
+    text-decoration: none;
+    color: #ffa075; /* default link color */
+    border-bottom: 1px dotted transparent;
+    transition: border-bottom 0.3s;
+  }
+
+  .custom-link:hover {
+    border-bottom: 1px solid #8a786f;
+  }
+</style>
+
+<div class="container my-4">
+  <div class="row">
+    <div class="col-12">
+      {% for market in markets %}
+      <div
+        class="card-no-shadow mb-3 d-flex align-items-stretch"
+        style="border: 1px solid #ddd; box-shadow: none; border-radius: 0.25rem;"
+      >
+        <!-- Left side: text content with some padding -->
+        <div class="p-3 flex-grow-1">
+          <h5 class="mb-1">{{ market.name }}</h5>
+          <p class="mb-1">
+            <strong>Location:</strong> {{ market.location }}<br>
+            <a href="{{ market.google_maps_link }}" target="_blank" class="custom-link">Open in Google Maps</a> |
+            <a href="{{ market.apple_maps_link }}" target="_blank" class="custom-link">Open in Apple Maps</a>
+          </p>
+          <p class="mb-1">
+            <strong>Date:</strong> {{ market.date }}
+          </p>
+          <p class="mb-1">
+            <strong>Open:</strong> {{ market.open_time }} –
+            <strong>Close:</strong> {{ market.close_time }}
+          </p>
+          {% if market.description %}
+          <p class="mb-1">
+            <strong>Description:</strong> {{ market.description }}
+          </p>
+          {% endif %}
+        </div>
+
+        <!-- Right side: image with no padding, covering the full column -->
+        <div class="p-0" style="width: 200px; min-width: 150px;">
+          <img
+            src="{% static 'images/leaf_logo.png' %}"
+            alt="Market Decoration"
+            class="img-fluid w-100 h-100"
+            style="object-fit: cover;"
+          >
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock content %}

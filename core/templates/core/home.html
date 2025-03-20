@@ -1,0 +1,82 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Home - HAPA.MADE{% endblock %}
+
+{% block content %}
+<style>
+
+    /* Custom Button Styling */
+    .custom-btn {
+        background-color: #ffe5d9;
+        color: #4a4a4a; /* Softer black */
+        border: 2px solid #ffe5d9;
+        transition: all 0.3s ease-in-out;
+        padding: 12px 24px;
+        border-radius: 8px;
+    }
+
+    .custom-btn:hover {
+        background-color: #ffceb7;
+        color: black;
+        border: 2px solid white;
+        transform: scale(1.03);
+    }
+
+    /* Unique Image Styling */
+    .custom-image {
+        width: 180px;
+        height: auto;
+        border-radius: 50%;
+        box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Section Divider */
+    .divider {
+        width: 50px;
+        height: 2px;
+        background-color: #ff6f61;
+        margin: 20px auto;
+    }
+
+    /* Subtle Text Styling */
+    p {
+        font-weight: 400;
+        color: #4a4a4a;
+    }
+
+</style>
+
+{% include "core/navbar.html" %}
+
+<div class="container text-center py-5">
+    <img src="{% static 'images/logo.jpg' %}" class="custom-image" alt="HAPA.MADE Logo">
+    <h1 class="display-4 fw-bold">HAPA.MADE</h1>
+    <p class="lead text-muted">Handmade sewing creations & professional workshops.</p>
+
+    <div class="divider"></div> <!-- Soft divider for structure -->
+
+    <div class="mt-4">
+        <a href="{% url 'shop_view' %}" class="btn custom-btn btn-lg mx-2">Shop Now</a>
+        <a href="{% url 'workshop_list' %}" class="btn custom-btn btn-lg mx-2">Workshops</a>
+    </div>
+</div>
+
+<div class="container mt-3">
+    <div class="row justify-content-center">
+        <div class="col-md-6 d-flex align-items-center">
+            <p class="fs-5 text-center">
+                Discover beautifully handcrafted pieces made with love and care. Whether you’re looking for unique fabric creations or want to learn the art of sewing, we have something for everyone.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="container text-center mt-3">
+    <div class="d-flex justify-content-center gap-4">
+        <a href="https://www.instagram.com/hapa.made/" target="_blank" class="text-dark fs-2">
+            <i class="bi bi-instagram"></i>
+        </a>
+    </div>
+</div>
+{% endblock %}

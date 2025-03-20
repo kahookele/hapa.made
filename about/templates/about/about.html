@@ -1,0 +1,85 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+{% include "core/navbar.html" %}
+<div class="container my-5">
+  <div class="row">
+    <!-- Image Column -->
+    <div class="col-md-4 d-flex justify-content-center mb-3 mb-md-0">
+      {% if about.image %}
+        <!-- Increase the max-height to make the image bigger -->
+        <img src="{{ about.image.url }}" alt="Owner Image" class="img-fluid img-thumbnail w-50" style="max-height: 275px;">
+      {% endif %}
+    </div>
+
+    <!-- Card Column -->
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header text-center">
+          <h1 class="mb-0">{{ about.name }}</h1>
+          <h3 class="mt-0">{{ about.title }}</h3>
+        </div>
+        <div class="card-body">
+          {% if about.background_description %}
+            <div class="mb-3">
+              <h4>Background</h4>
+              <p>{{ about.background_description }}</p>
+            </div>
+          {% endif %}
+          <div class="mb-3">
+            <h4>Mission and Values</h4>
+            <p>{{ about.mission_and_values }}</p>
+          </div>
+          {% if about.personal_touch %}
+            <div class="mb-3">
+              <h4>Personal Touch</h4>
+              <p>{{ about.personal_touch }}</p>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const img = document.querySelector(".img-thumbnail");
+    
+    if (img) {
+      img.addEventListener("click", function() {
+        // Create overlay
+        let overlay = document.createElement("div");
+        overlay.style.position = "fixed";
+        overlay.style.top = "0";
+        overlay.style.left = "0";
+        overlay.style.width = "100vw";
+        overlay.style.height = "100vh";
+        overlay.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+        overlay.style.display = "flex";
+        overlay.style.justifyContent = "center";
+        overlay.style.alignItems = "center";
+        overlay.style.zIndex = "1000";
+        
+        // Create enlarged image
+        let enlargedImg = document.createElement("img");
+        enlargedImg.src = img.src;
+        enlargedImg.style.maxWidth = "80vw";
+        enlargedImg.style.maxHeight = "80vh";
+        enlargedImg.style.borderRadius = "10px";
+        enlargedImg.style.boxShadow = "0px 0px 15px rgba(255, 255, 255, 0.8)";
+        
+        overlay.appendChild(enlargedImg);
+        document.body.appendChild(overlay);
+        
+        // Close popup when clicking outside image
+        overlay.addEventListener("click", function(event) {
+          if (event.target === overlay) {
+            document.body.removeChild(overlay);
+          }
+        });
+      });
+    }
+  });
+</script>
+{% endblock content %}

@@ -1,0 +1,70 @@
+<style>
+    /* Custom Styles for the Navbar */
+    .navbar {
+        background-color: #ffe5d9 !important; /* Coral Pink */
+    }
+
+    .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: black !important;
+    }
+
+    .navbar-nav {
+        margin: auto; /* Centers the nav links */
+    }
+
+    .nav-item {
+        margin: 0 10px; /* Spacing between links */
+    }
+
+    .nav-link {
+        color: black !important;
+        font-size: 1.1rem;
+        font-weight: 500;
+        transition: color 0.3s ease-in-out;
+    }
+
+    .nav-link:hover {
+        color: white !important; /* Light Coral on Hover */
+    }
+
+    .navbar-toggler {
+        border-color: white;
+    }
+
+    .navbar-toggler-icon {
+        filter: invert(1); /* Makes the menu icon white */
+    }
+</style>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg">
+    <div class="container text-center">
+        <a class="navbar-brand mx-auto" href="{% url 'home' %}">
+            HAPA.MADE
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}"><i class="bi bi-house"></i> Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'shop_view' %}"><i class="bi bi-bag"></i> Shop</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'workshop_list' %}"><i class="bi bi-pencil"></i> Workshops</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'market_list' %}"><i class="bi bi-shop"></i> Markets</a></li>
+                <li class="nav-item"><a class="nav-link" href="{% url 'about_view' %}"><i class="bi bi-info-circle"></i> About</a></li>
+            </ul>
+        </div>
+        <!-- Cart Icon Added -->
+        <div class="d-flex align-items-center p-1">
+            <a class="nav-link position-relative" href="#">
+                <i class="bi bi-cart3" style="font-size: 1.5rem; color: black;"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    0 <!-- Placeholder for cart count -->
+                </span>
+            </a>
+        </div>
+    </div>
+</nav>
+
