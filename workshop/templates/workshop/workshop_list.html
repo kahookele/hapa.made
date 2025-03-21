@@ -123,7 +123,6 @@
 
             <!-- Booking Modal (Inside the Loop) -->
             <div class="modal fade" id="bookingModal-{{ workshop.id }}" tabindex="-1" aria-labelledby="bookingModalLabel-{{ workshop.id }}" aria-hidden="true">
-
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -134,23 +133,18 @@
                             <form id="payment-form-{{ workshop.id }}" method="POST" action="{% url 'book_workshop' workshop.id %}">
                                 {% csrf_token %}
                                 <label for="exampleInput" class="form-label fs-3 text-bold mb-3">Booking details</label>
-
                                 <div class="mb-3">
                                     <input type="text" name="name" id="id_name_{{ workshop.id }}" class="form-control" placeholder="Enter full name" required>
                                 </div>
-                            
                                 <div class="mb-3">
                                     <input type="email" name="email" id="id_email_{{ workshop.id }}" class="form-control" placeholder="Enter email" required>
                                 </div>
-                            
                                 <div class="mb-3">
                                     <input type="text" name="phone" id="id_phone_{{ workshop.id }}" class="form-control" placeholder="Enter phone number" required>
                                 </div>
-                            
-                                <button type="button" class="btn w-100" onclick="handleCheckout('{{ workshop.id }}')">Register for spot</button>
+                                <button type="submit" class="btn w-100" formtarget="_blank">Register for spot</button>
                             </form>
                         </div>
-                        
                     </div>
                 </div>
             </div>

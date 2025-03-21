@@ -42,9 +42,11 @@ INSTALLED_APPS = [
     'workshop',
     'about',
     'markets',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -145,3 +147,8 @@ DEFAULT_FROM_EMAIL = 'Your Project <kahookelekelii@gmail.com>'
 # Stripe settings
 STRIPE_PUBLIC_KEY = "pk_test_51R3yMoBQbkO3KRx8i2pC1IDmMttgCtIaOFVKXHrfjCcVxoMuOdhXembmOWdRMfUbQB6606IopMZiHXz5QgwUbO0y00WwCSnL1y"
 STRIPE_SECRET_KEY = "sk_test_51R3yMoBQbkO3KRx8YCkl5AoyGQPCgxm4PB9HJOJiO2YbAak1jcGhkr2N4nq25esvIZk5t8Q0NHe79Ayns9xDH77m00E4uRgBbc"
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",  # Adjust this to match your frontend's origin
+    "http://127.0.0.1:8000",
+]
