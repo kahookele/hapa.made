@@ -1,16 +1,20 @@
 from .models import Cart
 
-def cart_context(request):
+def cart_count(request):
     cart_count = 0
     
-    # Get cart based on user or session
     if request.user.is_authenticated:
-        cart, created = Cart.objects.get_or_create(user=request.user)
+        # Get cart for logged in user
+        cart = Cart.objects.filter(user=request.user).first()
     else:
-        session_key = request.session.session_key
-        if session_key:
-            cart = Cart.objects.filter(session_id=session_key).first()
-            if cart:
-                cart_count = cart.items.count()
+        # Get cart for anonymous user via session
+        session_id = request.session.session_key
+        if not session_id:
+            request.session.create()
+            session_id = request.session.session_key
+        cart = Cart.objects.filter(session_id=session_id).first()
+    
+    if cart:
+        cart_count = sum(item.quantity for item in cart.items.all())
     
     return {'cart_count': cart_count}

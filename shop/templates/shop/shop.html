@@ -191,9 +191,12 @@
                         // Show a nicer notification
                         const notification = document.createElement('div');
                         notification.className = 'alert alert-success position-fixed';
-                        notification.style.top = '10px';
-                        notification.style.right = '10px';
+                        notification.style.top = '50%';
+                        notification.style.left = '50%';
+                        notification.style.transform = 'translate(-50%, -50%)';
                         notification.style.zIndex = '1000';
+                        notification.style.padding = '15px 25px';
+                        notification.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
                         notification.innerHTML = '<strong>Success!</strong> Product added to cart.';
                         document.body.appendChild(notification);
                         
