@@ -163,13 +163,13 @@
     const stripe = Stripe('{{ stripe_publishable_key }}');
     
     // For each workshop form, attach the event listener
-    {% for workshop in workshops %}
     document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('payment-form-{{ workshop.id }}').addEventListener('submit', function(event) {
-            // We'll use the server-side redirect approach, so no need to prevent default
-        });
+    {% for workshop in workshops %}
+    document.getElementById('payment-form-{{ workshop.id }}').addEventListener('submit', function(event) {
+        // We'll use the server-side redirect approach, so no need to prevent default
     });
     {% endfor %}
+});
 </script>
 
 {% endblock %}
