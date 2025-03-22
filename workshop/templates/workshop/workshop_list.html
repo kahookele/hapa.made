@@ -8,9 +8,8 @@
         border: 1px solid #ffceb7;
         border-radius: 10px;
         overflow: hidden;
-        background-color: white; /* ✅ Add this to ensure a white background */
+        background-color: white;
     }
-
 
     .custom-card img {
         border-top-left-radius: 10px;
@@ -88,7 +87,7 @@
                 {% else %}
                     <div class="alert alert-warning alert-dismissible fade show shadow p-3 rounded text-center fw-bold" role="alert">
                 {% endif %}
-                        {{ message|safe|striptags }}  <!-- Removes <ul> and <li> tags -->
+                        {{ message|safe|striptags }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
             {% endfor %}
@@ -132,7 +131,7 @@
                         <div class="modal-body">
                             <form id="payment-form-{{ workshop.id }}" method="POST" action="{% url 'book_workshop' workshop.id %}">
                                 {% csrf_token %}
-                                <label for="exampleInput" class="form-label fs-3 text-bold mb-3">Booking details</label>
+                                <label for="exampleInput" class="form-label fs-3 text-bold mb-3">Reserve spot</label>
                                 <div class="mb-3">
                                     <input type="text" name="name" id="id_name_{{ workshop.id }}" class="form-control" placeholder="Enter full name" required>
                                 </div>
@@ -142,7 +141,7 @@
                                 <div class="mb-3">
                                     <input type="text" name="phone" id="id_phone_{{ workshop.id }}" class="form-control" placeholder="Enter phone number" required>
                                 </div>
-                                <button type="submit" class="btn w-100" formtarget="_blank">Register for spot</button>
+                                <button type="submit" class="btn w-100">Go to payment</button>
                             </form>
                         </div>
                     </div>
@@ -157,41 +156,15 @@
 
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-  const stripe = Stripe("pk_test_51R3yMoBQbkO3KRx8i2pC1IDmMttgCtIaOFVKXHrfjCcVxoMuOdhXembmOWdRMfUbQB6606IopMZiHXz5QgwUbO0y00WwCSnL1y");
-
-  async function handleCheckout(workshopId) {
-    // Get the form corresponding to the workshop
-    const form = document.getElementById(`payment-form-${workshopId}`);
-    const formData = new FormData(form);
+    // Initialize Stripe with your publishable key
+    const stripe = Stripe('{{ stripe_publishable_key }}');
     
-    try {
-      // Send data to server to create a Stripe Checkout Session
-      const response = await fetch(form.action, {
-        method: "POST",
-        headers: { "X-CSRFToken": formData.get("csrfmiddlewaretoken") },
-        body: formData,
-        credentials: 'same-origin'
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || "Checkout session creation failed");
-      }
-
-      const sessionId = data.session_id;
-      if (!sessionId) {
-        throw new Error("No session ID returned.");
-      }
-
-      // Redirect to Stripe Checkout
-      const { error } = await stripe.redirectToCheckout({ sessionId });
-      if (error) {
-        alert("Redirect failed: " + error.message);
-      }
-    } catch (error) {
-      alert("An error occurred: " + error.message);
-    }
-  }
+    // For each workshop form, attach the event listener
+    {% for workshop in workshops %}
+    document.getElementById('payment-form-{{ workshop.id }}').addEventListener('submit', function(event) {
+        // We'll use the server-side redirect approach, so no need to prevent default
+    });
+    {% endfor %}
 </script>
+
 {% endblock %}

@@ -58,11 +58,9 @@
         </div>
         <!-- Cart Icon Added -->
         <div class="d-flex align-items-center p-1">
-            <a class="nav-link position-relative" href="#">
-                <i class="bi bi-cart3" style="font-size: 1.5rem; color: black;"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    0 <!-- Placeholder for cart count -->
-                </span>
+            <a href="{% url 'cart_view' %}" class="nav-link">
+                <i class="bi bi-bag"></i> Cart
+                <span id="cart-count">{{ cart_count }}</span>
             </a>
         </div>
     </div>

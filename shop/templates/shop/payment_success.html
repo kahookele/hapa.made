@@ -1,0 +1,26 @@
+{% extends 'core/base.html' %}
+{% block content %}
+{% include 'core/navbar.html' %}
+
+<div class="container py-5 text-center">
+    <div class="alert alert-success mb-4">
+        <h2>Payment Successful!</h2>
+        <p>Your order has been processed successfully.</p>
+    </div>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            Order Details
+        </div>
+        <div class="card-body">
+            <p><strong>Payment ID:</strong> {{ payment_intent.id }}</p>
+            <p><strong>Amount:</strong> ${{ payment_intent.amount|floatformat:2 }}</p>
+            <p><strong>Date:</strong> {{ payment_intent.created|date:"F j, Y" }}</p>
+        </div>
+    </div>
+    
+    <p>A confirmation email has been sent to your email address.</p>
+    
+    <a href="{% url 'shop' %}" class="btn btn-primary mt-3">Continue Shopping</a>
+</div>
+{% endblock %} 

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -69,6 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'shop.context_processors.cart_context',
             ],
         },
     },
@@ -122,8 +124,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-import os
-
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
@@ -145,8 +145,8 @@ EMAIL_HOST_PASSWORD = 'jtar zhns zfpz bbhr'
 DEFAULT_FROM_EMAIL = 'Your Project <kahookelekelii@gmail.com>'
 
 # Stripe settings
-STRIPE_PUBLIC_KEY = "pk_test_51R3yMoBQbkO3KRx8i2pC1IDmMttgCtIaOFVKXHrfjCcVxoMuOdhXembmOWdRMfUbQB6606IopMZiHXz5QgwUbO0y00WwCSnL1y"
-STRIPE_SECRET_KEY = "sk_test_51R3yMoBQbkO3KRx8YCkl5AoyGQPCgxm4PB9HJOJiO2YbAak1jcGhkr2N4nq25esvIZk5t8Q0NHe79Ayns9xDH77m00E4uRgBbc"
+STRIPE_PUBLISHABLE_KEY = 'pk_test_51R5Bt1PFLMyt9ocHveuU7ltUvY90QlDUPfq7pvVDWClwNs0HE4iyd7vlTZJDNy7LWtVv3WiLL6i7zsgjFydWEg3B00KyClY5LG'
+STRIPE_SECRET_KEY = 'sk_test_51R5Bt1PFLMyt9ocH7ACPsonrLsFVv4QRgHNpgGQJpEjgyJErU6x642mveDsAU7GrmAZMRpaJ2E9d4d0X3jGJxNyT005OFuByU8'
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",  # Adjust this to match your frontend's origin
