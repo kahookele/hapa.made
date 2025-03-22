@@ -103,6 +103,9 @@
                         <p><strong>Difficulty:</strong> {{ workshop.difficulty }}</p>
                         <p class="card-text">{{ workshop.description }}</p>
                         <p><strong>Date:</strong> {{ workshop.date|date:"F d, Y" }}</p>
+                        {% if workshop.location %}
+                        <p><strong>Location:</strong> {{ workshop.location }}</p>
+                        {% endif %}
                         <p><strong>Price:</strong> ${{ workshop.price }}</p>
                         <p><strong>Seats Available:</strong> {{ workshop.seats_available }}</p>
                         
@@ -161,8 +164,10 @@
     
     // For each workshop form, attach the event listener
     {% for workshop in workshops %}
-    document.getElementById('payment-form-{{ workshop.id }}').addEventListener('submit', function(event) {
-        // We'll use the server-side redirect approach, so no need to prevent default
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('payment-form-{{ workshop.id }}').addEventListener('submit', function(event) {
+            // We'll use the server-side redirect approach, so no need to prevent default
+        });
     });
     {% endfor %}
 </script>
