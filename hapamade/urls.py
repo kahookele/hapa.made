@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
+from workshop import views as workshop_views  # Import workshop views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,6 +27,8 @@ urlpatterns = [
     path('workshops/', include('workshop.urls')),
     path('about/', include('about.urls')),
     path('markets/', include('markets.urls')),
+    path('booking-success/', workshop_views.booking_success, name='booking_success'),
+    path('booking-cancel/', workshop_views.booking_cancel, name='booking_cancel'),
 ]
 
 if settings.DEBUG:

@@ -47,7 +47,7 @@ def book_workshop(request, workshop_id):
                     'email': email,
                     'phone': phone,
                 },
-                success_url=request.build_absolute_uri('/booking-success/'),
+                success_url=request.build_absolute_uri('/booking-success/') + '?session_id={CHECKOUT_SESSION_ID}',
                 cancel_url=request.build_absolute_uri('/booking-cancel/'),
             )
             return redirect(session.url)
@@ -111,8 +111,38 @@ def stripe_webhook(request):
     return HttpResponse(status=200)
 
 def booking_success(request):
-    messages.success(request, "Your booking and payment were successful!")
-    return redirect('workshop_list')
+    # Get the session ID from the URL parameters
+    session_id = request.GET.get('session_id')
+    booking = None
+    workshop = None
+    
+    if session_id:
+        # If we have a session ID from Stripe, fetch the booking
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+        try:
+            # Retrieve the session data from Stripe
+            session = stripe.checkout.Session.retrieve(session_id)
+            workshop_id = session.metadata.get('workshop_id')
+            email = session.metadata.get('email')
+            
+            # Find the booking in our database
+            if workshop_id and email:
+                try:
+                    booking = Booking.objects.get(
+                        workshop_id=workshop_id,
+                        email=email,
+                    )
+                    workshop = booking.workshop
+                except Booking.DoesNotExist:
+                    messages.warning(request, "Your booking information could not be found.")
+        except Exception as e:
+            messages.error(request, f"Error retrieving booking information: {str(e)}")
+    
+    # Render the success page (with or without booking details)
+    return render(request, 'workshop/booking_success.html', {
+        'booking': booking,
+        'workshop': workshop
+    })
 
 def booking_cancel(request):
     messages.error(request, "Booking cancelled.")

@@ -1,0 +1,32 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Booking Confirmed - HAPA.MADE{% endblock %}
+
+{% block content %}
+{% include "core/navbar.html" %}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body text-center">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>
+                    <h1 class="mt-3">Booking Confirmed!</h1>
+                    <p class="lead">Thank you for booking your workshop!</p>
+                    
+                    <div class="workshop-details mt-4">
+                        <h3>{{ workshop.title }}</h3>
+                        <p>{{ workshop.date|date:"F j, Y" }} at {{ workshop.time }}</p>
+                        <p>{{ workshop.location }}</p>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'home' %}" class="btn" style="background-color: #ffceb7;">Go back home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
