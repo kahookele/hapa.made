@@ -26,6 +26,15 @@ def book_workshop(request, workshop_id):
         email = request.POST.get('email')
         phone = request.POST.get('phone')
         
+        # Create a pending booking record
+        booking = Booking.objects.create(
+            workshop=workshop,
+            name=name,
+            email=email,
+            phone=phone,
+            payment_status='pending'  # Set initial status as pending
+        )
+        
         stripe.api_key = settings.STRIPE_SECRET_KEY
         try:
             session = stripe.checkout.Session.create(
@@ -43,6 +52,7 @@ def book_workshop(request, workshop_id):
                 mode='payment',
                 metadata={
                     'workshop_id': workshop.id,
+                    'booking_id': booking.id,  # Add booking ID to metadata
                     'name': name,
                     'email': email,
                     'phone': phone,
@@ -83,12 +93,29 @@ def stripe_webhook(request):
         
         # Extract metadata from the session to identify the booking
         workshop_id = session.get('metadata', {}).get('workshop_id')
+        booking_id = session.get('metadata', {}).get('booking_id')
         name = session.get('metadata', {}).get('name')
         email = session.get('metadata', {}).get('email')
         phone = session.get('metadata', {}).get('phone')
         
         if workshop_id and email:
             try:
+                # First try to find booking by ID (more reliable)
+                if booking_id:
+                    try:
+                        booking = Booking.objects.get(id=booking_id)
+                        booking.payment_status = 'paid'
+                        booking.save()
+                        
+                        # Decrease available seats if not done already
+                        workshop = booking.workshop
+                        workshop.seats_available -= 1
+                        workshop.save()
+                        return HttpResponse(status=200)
+                    except Booking.DoesNotExist:
+                        pass  # Continue to legacy fallback method
+                
+                # Legacy fallback method
                 workshop = Workshop.objects.get(id=workshop_id)
                 # Create booking record if it doesn't exist yet
                 booking, created = Booking.objects.get_or_create(
@@ -100,6 +127,10 @@ def stripe_webhook(request):
                         'payment_status': 'paid'
                     }
                 )
+                
+                if not booking.payment_status == 'paid':
+                    booking.payment_status = 'paid'
+                    booking.save()
                 
                 if created:
                     # Decrease available seats
