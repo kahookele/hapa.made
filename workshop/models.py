@@ -41,3 +41,25 @@ class Booking(models.Model):
 def increment_seats_when_booking_deleted(sender, instance, **kwargs):
     instance.workshop.seats_available += 1
     instance.workshop.save()
+
+@receiver(post_save, sender=Booking)
+def update_seats_on_booking_paid(sender, instance, created, **kwargs):
+    # Only proceed if payment status is 'paid'
+    if instance.payment_status == 'paid':
+        # Get all paid bookings for this workshop
+        paid_bookings_count = Booking.objects.filter(
+            workshop=instance.workshop,
+            payment_status='paid'
+        ).count()
+        
+        # Calculate how many seats should be taken
+        total_seats = instance.workshop.seats_available + paid_bookings_count
+        remaining_seats = max(0, total_seats - paid_bookings_count)
+        
+        # Only update if there's a discrepancy
+        if instance.workshop.seats_available != remaining_seats:
+            instance.workshop.seats_available = remaining_seats
+            # Use update to avoid triggering this signal again
+            Workshop.objects.filter(id=instance.workshop.id).update(
+                seats_available=remaining_seats
+            )

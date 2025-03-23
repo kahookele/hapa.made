@@ -35,6 +35,7 @@ def book_workshop(request, workshop_id):
             payment_status='pending'  # Set initial status as pending
         )
         
+        # Store the Stripe session ID in the booking
         stripe.api_key = settings.STRIPE_SECRET_KEY
         try:
             session = stripe.checkout.Session.create(
@@ -52,7 +53,7 @@ def book_workshop(request, workshop_id):
                 mode='payment',
                 metadata={
                     'workshop_id': workshop.id,
-                    'booking_id': booking.id,  # Add booking ID to metadata
+                    'booking_id': booking.id,
                     'name': name,
                     'email': email,
                     'phone': phone,
@@ -60,8 +61,15 @@ def book_workshop(request, workshop_id):
                 success_url=request.build_absolute_uri('/booking-success/') + '?session_id={CHECKOUT_SESSION_ID}',
                 cancel_url=request.build_absolute_uri('/booking-cancel/'),
             )
+            
+            # Store Stripe session ID
+            booking.stripe_session_id = session.id
+            booking.save()
+            
             return redirect(session.url)
         except Exception as e:
+            # Delete the booking if Stripe fails
+            booking.delete()
             messages.error(request, "Checkout creation failed: " + str(e))
             return redirect('workshop_list')
     
@@ -94,51 +102,57 @@ def stripe_webhook(request):
         # Extract metadata from the session to identify the booking
         workshop_id = session.get('metadata', {}).get('workshop_id')
         booking_id = session.get('metadata', {}).get('booking_id')
-        name = session.get('metadata', {}).get('name')
-        email = session.get('metadata', {}).get('email')
-        phone = session.get('metadata', {}).get('phone')
         
-        if workshop_id and email:
+        if booking_id:
             try:
-                # First try to find booking by ID (more reliable)
-                if booking_id:
-                    try:
-                        booking = Booking.objects.get(id=booking_id)
-                        booking.payment_status = 'paid'
-                        booking.save()
-                        
-                        # Decrease available seats if not done already
-                        workshop = booking.workshop
-                        workshop.seats_available -= 1
-                        workshop.save()
-                        return HttpResponse(status=200)
-                    except Booking.DoesNotExist:
-                        pass  # Continue to legacy fallback method
+                # Get the booking by ID
+                booking = Booking.objects.get(id=booking_id)
                 
-                # Legacy fallback method
+                # Update payment status
+                booking.payment_status = 'paid'
+                booking.save()
+                
+                # Explicitly decrease the workshop's available seats
+                workshop = booking.workshop
+                workshop.seats_available = max(0, workshop.seats_available - 1)
+                workshop.save()
+                
+                return HttpResponse(status=200)
+            except Booking.DoesNotExist:
+                pass  # Continue to legacy fallback method
+        
+        # Legacy fallback logic
+        if workshop_id:
+            try:
+                # Find the workshop by ID
                 workshop = Workshop.objects.get(id=workshop_id)
-                # Create booking record if it doesn't exist yet
-                booking, created = Booking.objects.get_or_create(
-                    workshop=workshop,
-                    email=email,
-                    defaults={
-                        'name': name,
-                        'phone': phone,
-                        'payment_status': 'paid'
-                    }
-                )
                 
-                if not booking.payment_status == 'paid':
-                    booking.payment_status = 'paid'
-                    booking.save()
-                
-                if created:
-                    # Decrease available seats
-                    workshop.seats_available -= 1
-                    workshop.save()
+                # Create a booking record if it doesn't exist
+                customer_email = session.get('customer_details', {}).get('email')
+                if customer_email:
+                    # Check if we already have a booking with this session ID
+                    existing_booking = Booking.objects.filter(stripe_session_id=session.id).first()
+                    if not existing_booking:
+                        # Create a new booking
+                        booking = Booking.objects.create(
+                            workshop=workshop,
+                            name=session.get('metadata', {}).get('name', 'Customer'),
+                            email=customer_email,
+                            phone=session.get('metadata', {}).get('phone', ''),
+                            payment_status='paid',
+                            stripe_session_id=session.id
+                        )
+                        
+                        # Update available seats
+                        workshop.seats_available = max(0, workshop.seats_available - 1)
+                        workshop.save()
             except Workshop.DoesNotExist:
-                pass
-    
+                # Workshop not found
+                return HttpResponse(status=400)
+            except Exception as e:
+                # Other errors
+                return HttpResponse(status=400)
+                
     return HttpResponse(status=200)
 
 def booking_success(request):
@@ -153,19 +167,25 @@ def booking_success(request):
         try:
             # Retrieve the session data from Stripe
             session = stripe.checkout.Session.retrieve(session_id)
-            workshop_id = session.metadata.get('workshop_id')
-            email = session.metadata.get('email')
+            booking_id = session.metadata.get('booking_id')
             
-            # Find the booking in our database
-            if workshop_id and email:
+            if booking_id:
                 try:
-                    booking = Booking.objects.get(
-                        workshop_id=workshop_id,
-                        email=email,
-                    )
+                    booking = Booking.objects.get(id=booking_id)
                     workshop = booking.workshop
+                    
+                    # Ensure payment status is updated
+                    if booking.payment_status != 'paid':
+                        booking.payment_status = 'paid'
+                        booking.save()
+                        
+                        # Decrease available seats if not already done
+                        if workshop.seats_available > 0:
+                            workshop.seats_available -= 1
+                            workshop.save()
                 except Booking.DoesNotExist:
                     messages.warning(request, "Your booking information could not be found.")
+            # ... existing fallback code ...
         except Exception as e:
             messages.error(request, f"Error retrieving booking information: {str(e)}")
     
