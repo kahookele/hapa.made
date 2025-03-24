@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-26b5=)_46k0oa+!c0!#w=cicgnu$cp=6$3oigdp0mu=k(-!1ne'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -140,13 +144,13 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'kahookelekelii@gmail.com'
-EMAIL_HOST_PASSWORD = 'jtar zhns zfpz bbhr'
-DEFAULT_FROM_EMAIL = 'Your Project <kahookelekelii@gmail.com>'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = f'Your Project <{os.getenv("EMAIL_HOST_USER")}>'
 
 # Stripe settings
-STRIPE_PUBLISHABLE_KEY = 'pk_test_51R5Bt1PFLMyt9ocHveuU7ltUvY90QlDUPfq7pvVDWClwNs0HE4iyd7vlTZJDNy7LWtVv3WiLL6i7zsgjFydWEg3B00KyClY5LG'
-STRIPE_SECRET_KEY = 'sk_test_51R5Bt1PFLMyt9ocH7ACPsonrLsFVv4QRgHNpgGQJpEjgyJErU6x642mveDsAU7GrmAZMRpaJ2E9d4d0X3jGJxNyT005OFuByU8'
+STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",  # Adjust this to match your frontend's origin
