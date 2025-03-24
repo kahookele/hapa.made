@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.ngrok.io', '.ngrok-free.app']
 
 
 # Application definition
@@ -153,6 +153,10 @@ STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",  # Adjust this to match your frontend's origin
+    "http://localhost:8000",
     "http://127.0.0.1:8000",
+    "https://*.ngrok-free.app",
 ]
+
+# For development only - be more restrictive in production
+CORS_ALLOW_ALL_ORIGINS = True  # Temporary for testing
